@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Music Player</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #e9e9ee;
+            font-family: Arial, sans-serif;
+        }
+
+        .player {
+            width: 350px;
+            background: hwb(203 53% 2%);
+            border-radius: 35px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .atas {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .cover {
+            width: 260px;
+            height: 260px;
+            margin: auto;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #777, #222);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            color: white;
+        }
+
+         .cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .judul {
+            margin-top: 25px;
+        }
+
+        .judul h2 {
+            margin: 0;
+            font-size: 23px;
+        }
+
+        .judul p {
+            color: #777;
+            margin-top: 7px;
+        }
+
+        .progress {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .waktu {
+            display: flex;
+            justify-content: space-between;
+            color: #777;
+            font-size: 12px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+
+        .kontrol {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        button {
+            border: none;
+            background: none;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .play {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: black;
+            color: white;
+            font-size: 28px;
+        }
+
+        .volume {
+            margin-top: 10px;
+        }
+
+        .volume p {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .playlist {
+            margin-top: 20px;
+        }
+
+        .lagu {
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .lagu:hover {
+            background:lightskyblue#87cefa;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="player">
+
+    <div class="atas">
+        Ajeng's playlist
+    </div>
+
+    <div class="cover">
+    <img src="f4cb163e6386fda7efbbf85742a275ed~2.jpg" alt="cover lagu">
+         </div>
+
+    <div class="judul">
+        <h2 id="judul">Sogs</h2>
+        <p id="artis">by ajeng kiyutt</p>
+    </div>
+
+    <div class="progress">
+
+        <input
+            id="progress"
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+        >
+
+        <div class="waktu">
+            <span id="waktuSekarang">0:00</span>
+            <span id="waktuTotal">0:00</span>
+        </div>
+
+    </div>
+
+    <div class="kontrol">
+
+        <button onclick="sebelumnya()">⏮</button>
+
+        <button class="play" onclick="playPause()" id="play">
+            ▶
+        </button>
+
+        <button onclick="berikutnya()">⏭</button>
+
+    </div>
+
+    <div class="volume">
+
+        <p>🔊 Volume</p>
+
+        <input
+            id="volume"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+        >
+
+    </div>
+
+    <div class="playlist">
+
+        <div class="lagu" onclick="pilihLagu(0)">
+            🎵 Love Nwantiti
+        </div>
+
+        <div class="lagu" onclick="pilihLagu(1)">
+            🎵 Know Me Too Well
+        </div>
+
+        <div class="lagu" onclick="pilihLagu(2)">
+            🎵 Shape Of My Hart
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+let audio = new Audio();
+
+let lagu = [
+    {
+        judul: "Love Nwantiti",
+        artis: "CKay",
+        file: ".trashed-1793364630-CKay - Love Nwantiti.mp3",
+        cover: "IMG-20260930-WA0029.jpg"
+    },
+
+    {
+        judul: "Know Me Too Well",
+        artis: "New Hope Club",
+        file: "New Hope Club, DANNA - Know Me Too Well (4).mp3",
+        cover: "51c16ed5443d7d8671df18e15569c1b6 (1).jpg"
+    },
+
+    {
+        judul: "Shape Of My Hart",
+        artis: "Backstreet Boys",
+        file: "Backstreet Boys - Shape Of My Heart (Official HD Video).mp3",
+        cover: "e1b373503a5be85fe4150d80e056ea50 (1).jpg"
+    }
+];
+
+let sekarang = 0;
+
+function pilihLagu(index) {
+
+    sekarang = index;
+
+    audio.src = lagu[sekarang].file;
+
+    document.getElementById("judul").innerText =
+        lagu[sekarang].judul;
+
+    document.getElementById("artis").innerText =
+        lagu[sekarang].artis;
+  
+    document.querySelector(".cover img").src =
+    lagu[sekarang].cover;
+
+    audio.play();
+
+    document.getElementById("play").innerText = "⏸";
+}
+
+function playPause() {
+
+    if (audio.paused) {
+
+        audio.play();
+
+        document.getElementById("play").innerText = "⏸";
+
+    } else {
+
+        audio.pause();
+
+        document.getElementById("play").innerText = "▶";
+    }
+}
+
+function berikutnya() {
+
+    sekarang++;
+
+    if (sekarang >= lagu.length) {
+        sekarang = 0;
+    }
+
+    pilihLagu(sekarang);
+}
+
+function sebelumnya() {
+
+    sekarang--;
+
+    if (sekarang < 0) {
+        sekarang = lagu.length - 1;
+    }
+
+    pilihLagu(sekarang);
+}
+
+document.getElementById("volume")
+    .addEventListener("input", function() {
+
+        audio.volume = this.value;
+
+    });
+
+audio.addEventListener("timeupdate", function() {
+
+    if (audio.duration) {
+
+        let persen =
+            (audio.currentTime / audio.duration) * 100;
+
+        document.getElementById("progress").value =
+            persen;
+
+        document.getElementById("waktuSekarang").innerText =
+            formatWaktu(audio.currentTime);
+
+        document.getElementById("waktuTotal").innerText =
+            formatWaktu(audio.duration);
+    }
+
+});
+
+document.getElementById("progress")
+    .addEventListener("input", function() {
+
+        if (audio.duration) {
+
+            audio.currentTime =
+                (this.value / 100) * audio.duration;
+        }
+
+    });
+
+function formatWaktu(detik) {
+
+    let menit = Math.floor(detik / 60);
+
+    let detikSisa =
+        Math.floor(detik % 60);
+
+    if (detikSisa < 10) {
+        detikSisa = "0" + detikSisa;
+    }
+
+    return menit + ":" + detikSisa;
+}
+
+audio.addEventListener("ended", function() {
+    berikutnya();
+});
+
+</script>
+
+</body>
+</html>
